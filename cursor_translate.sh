@@ -1,12 +1,10 @@
 #!/bin/bash
 
-export PATH="$HOME/.cargo/bin:$PATH"
-
-
 SELECTED_TEXT=$(xsel -o)
-TRANSLATION=$(argos-translate --from zh --to en "$SELECTED_TEXT")
-PINYIN=$(echo "$SELECTED_TEXT" | pinyin-tool)
 
-env > ~/term_environment.txt
+# translating and making special characters disappear (speficially bold) which dont render well in notify-send
+TRANSLATION=$(trans "$SELECTED_TEXT" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g")
 
-notify-send "Translation" "$TRANSLATION\n$PINYIN"
+OUTPUT=$(echo "$TRANSLATION" | head -4 | tail -3)
+
+notify-send "Translation" "$OUTPUT"
